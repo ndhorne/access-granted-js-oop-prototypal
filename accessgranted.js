@@ -14,14 +14,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+"use strict";
 
 function Game() {
-  this.pin = undefined;
-  this.entry = "";
-  this.entries = [];
+  this.pin;
+  this.entry;
+  this.entries;
   this.buttons = [];
   this.lcd = document.getElementById("lcd");
-  this.resetDisplayTimeout = undefined;
+  this.resetDisplayTimeout;
   
   for (let i = 0; i < 10; i++) {
     this.buttons[i] = document.getElementById("button" + i);
@@ -74,21 +75,21 @@ Game.prototype.updateEntries = function updateEntries() {
 };
 
 Game.prototype.pinGen = function pinGen() {
-  this.pin = "";
+  let pin = "";
   for (let i = 0; i < 4; i++) {
-    this.pin += Math.floor(Math.random() * 10);
+    pin += Math.floor(Math.random() * 10);
   }
   //print PIN to console for debugging (or cheating)
-  //console.log(this.pin);
-  this.highlightKeys();
+  //console.log(pin);
+  return pin;
 };
 
-Game.prototype.newGame = function newGame(event) {
-  event.preventDefault();
-  this.pinGen();
+Game.prototype.initGame = function initGame() {
+  this.pin = this.pinGen();
   this.entry = "";
   this.entries = [];
   this.updateDisplay();
+  this.highlightKeys();
 };
 
 Game.prototype.verifyEntry = function verifyEntry() {
@@ -100,16 +101,20 @@ Game.prototype.verifyEntry = function verifyEntry() {
     this.updateEntries();
     alert("PIN " + this.pin + " cracked in " + this.entries.length +
       " attempt" + (this.entries.length > 1 ? "s" : ""));
-    this.entries = [];
-    this.pinGen();
+    this.initGame();
   } else {
     this.lcd.textContent = "Access Denied";
     this.lcd.style.backgroundColor = "red";
     this.resetDisplayTimeout = setTimeout(() => this.updateDisplay(),
       1500);
     this.updateEntries();
+    this.entry = "";
   }
-  this.entry = "";
+};
+
+Game.prototype.newGame = function newGame(event) {
+  event.preventDefault();
+  this.initGame();
 };
 
 Game.prototype.about = function about(event) {
@@ -130,7 +135,7 @@ Game.prototype.about = function about(event) {
 };
 
 Game.prototype.start = function start() {
-  this.pinGen();
+  this.initGame();
 };
 
 let game = new Game();
