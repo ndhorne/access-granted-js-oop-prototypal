@@ -130,7 +130,9 @@ Game.prototype.about = function about(event) {
     "resulting in PINs with less than four keys being\n" +
     "highlighted. PINs may begin with zero. Input is\n" +
     "accepted by way of both mouse primary button\n" +
-    "and keyboard number keys.");
+    "and keyboard number keys.\n" +
+    "\n" +
+    "Source available at https://github.com/ndhorne");
   event.preventDefault();
 };
 
