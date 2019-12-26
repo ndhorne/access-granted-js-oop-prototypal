@@ -22,3 +22,5 @@ related data and behavior together inside of a single
 self-contained unit more commonly known as an instance
 in a bid to manage complexity through the constructs
 afforded by object oriented programming.
+
+Source available at https://github.com/ndhorne
