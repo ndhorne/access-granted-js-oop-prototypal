@@ -114,6 +114,7 @@ Game.prototype.verifyEntry = function verifyEntry() {
 Game.prototype.newGame = function newGame(event) {
   event.preventDefault();
   this.initGame();
+  this.updateDisplay();
 };
 
 Game.prototype.about = function about(event) {
