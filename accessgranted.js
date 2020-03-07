@@ -26,10 +26,13 @@ function Game() {
   this.lcd = document.getElementById("lcd");
   this.resetDisplayTimeout;
   
+  //initializes buttons array with references to button elements
   for (let i = 0; i < 10; i++) {
     this.buttons[i] = document.getElementById("button" + i);
   }
 
+  //wires up button elements with callback function to update entry
+  //through forEach higher order function
   this.buttons.forEach(button => {
     button.addEventListener("click", event => {
       if (this.entry.length < 4) {
@@ -39,6 +42,7 @@ function Game() {
     });
   });
   
+  //wires up keyboard number keys with callback function to update entry
   window.addEventListener("keydown", event => {
     if (/^\d$/.test(event.key)) {
       if (this.entry.length < 4) {
@@ -49,11 +53,15 @@ function Game() {
   });
 }
 
+//updates lcd div element with current entry
 Game.prototype.updateDisplay = function updateDisplay() {
   this.lcd.style.backgroundColor = "darkgrey";
   this.lcd.textContent = this.entry;
 };
 
+//upon key input clears timeout to reset display(if any), updates
+//display with current entry, and when four digits in length verifies
+//entry after half-second timeout
 Game.prototype.keyIn = function keyIn() {
   clearTimeout(this.resetDisplayTimeout);
   this.updateDisplay();
@@ -62,6 +70,7 @@ Game.prototype.keyIn = function keyIn() {
   }
 };
 
+//highlights button elements corresponding to keys contained in PIN
 Game.prototype.highlightKeys = function highlightKeys() {
   this.buttons.forEach(button => {
     button.style.backgroundColor = "";
@@ -72,10 +81,12 @@ Game.prototype.highlightKeys = function highlightKeys() {
   }
 };
 
+//updates array of entered entries
 Game.prototype.updateEntries = function updateEntries() {
   this.entries.push(this.entry);
 };
 
+//returns randomly generated PIN
 Game.prototype.pinGen = function pinGen() {
   let pin = "";
   for (let i = 0; i < 4; i++) {
@@ -86,6 +97,7 @@ Game.prototype.pinGen = function pinGen() {
   return pin;
 };
 
+//initializes new game
 Game.prototype.initGame = function initGame() {
   this.pin = this.pinGen();
   this.entry = "";
@@ -93,6 +105,10 @@ Game.prototype.initGame = function initGame() {
   this.highlightKeys();
 };
 
+//verifies whether entry matches PIN, updates and sets timeout to clear
+//display accordingly, updates array of entered entries, displays win
+//dialog and reinitializes game upon success, clears entry upon failure,
+//returns analogous boolean value for use with auto-solve
 Game.prototype.verifyEntry = function verifyEntry(fiatEntry) {
   if (fiatEntry) {
     this.entry = fiatEntry;
@@ -122,12 +138,14 @@ Game.prototype.verifyEntry = function verifyEntry(fiatEntry) {
   }
 };
 
+//initializes new game and clears display
 Game.prototype.newGame = function newGame(event) {
   event.preventDefault();
   this.initGame();
   this.updateDisplay();
 };
 
+//displays about dialog
 Game.prototype.about = function about(event) {
   let aboutText =
     "Access Granted JS Prototypal\n" +
@@ -160,6 +178,7 @@ Game.prototype.about = function about(event) {
   event.preventDefault();
 };
 
+//returns array of unique PIN digits
 Game.prototype.getUniqueDigits = function getUniqueDigits() {
   let uniqueDigits = [];
   
@@ -172,6 +191,7 @@ Game.prototype.getUniqueDigits = function getUniqueDigits() {
   return uniqueDigits;
 };
 
+//returns array of all possible combinations of unique PIN digits
 Game.prototype.inferAbsentDigits = function inferAbsentDigits() {
   let uniqueDigits = this.getUniqueDigits();
   let inferences = [];
@@ -199,6 +219,8 @@ Game.prototype.inferAbsentDigits = function inferAbsentDigits() {
   return inferences;
 };
 
+//sequentially attempts all possible permutations of each combination
+//until solved
 Game.prototype.autoSolveSequential = function autoSolveSequential(event) {
   let inferences = this.inferAbsentDigits();
   let solved = false;
@@ -252,6 +274,8 @@ Game.prototype.autoSolveSequential = function autoSolveSequential(event) {
   event.preventDefault();
 };
 
+//sequentially creates array of all possible permutations of each
+//combination and attempts each permutation until solved
 Game.prototype.autoSolveSequential2 = function autoSolveSequential2(event) {
   let inferences = this.inferAbsentDigits();
   let permutations = [];
@@ -300,6 +324,8 @@ Game.prototype.autoSolveSequential2 = function autoSolveSequential2(event) {
   event.preventDefault();
 };
 
+//randomly generates all possible permutations of each combination and
+//attempts unentered permutations until solved
 Game.prototype.autoSolveRandom = function autoSolveRandom(event) {
   let uniqueDigits = this.getUniqueDigits();
   let inferences = this.inferAbsentDigits();
@@ -347,6 +373,8 @@ Game.prototype.autoSolveRandom = function autoSolveRandom(event) {
   event.preventDefault();
 };
 
+//randomly generates entries from unique PIN digits and attempts
+//unentered entries until solved
 Game.prototype.autoSolveRandom2 = function autoSolveRandom2(event) {
   let uniqueDigits = this.getUniqueDigits();
   let solved = false;
@@ -364,6 +392,8 @@ Game.prototype.autoSolveRandom2 = function autoSolveRandom2(event) {
   event.preventDefault();
 };
 
+//randomly generates entries from all digits and attempts unentered
+//entries until solved
 Game.prototype.autoSolveRandom3 = function autoSolveRandom3(event) {
   let solved = false;
   
@@ -380,10 +410,12 @@ Game.prototype.autoSolveRandom3 = function autoSolveRandom3(event) {
   event.preventDefault();
 };
 
+//logs to console duration of auto-solve methods in milliseconds
 Game.prototype.autoSolveBenchmarks = function autoSolveBenchmarks() {
   let startTime, endTime;
   let benchpin = this.pinGen();
   
+  //suppress win dialog box
   this.silent = true;
   
   this.pin = benchpin;
@@ -424,10 +456,12 @@ Game.prototype.autoSolveBenchmarks = function autoSolveBenchmarks() {
   this.silent = false;
 };
 
+//initializes first game
 Game.prototype.start = function start() {
   this.initGame();
 };
 
+//instantiate and initiate new instance of game
 let game = new Game();
 game.start();
 
