@@ -53,7 +53,7 @@ function Game() {
   });
 }
 
-//updates lcd div element with current entry
+//updates #lcd div element with current entry
 Game.prototype.updateDisplay = function updateDisplay() {
   this.lcd.style.backgroundColor = "darkgrey";
   this.lcd.textContent = this.entry;
@@ -163,12 +163,11 @@ Game.prototype.about = function about(event) {
     "and keyboard number keys.\n" +
     "\n" +
     "This new but not necessarily improved " +
-    "implementation of Access Granted JS utilizes " +
-    "\"constructor\" functions and prototypal " +
-    "\"inheritance\" to logically encapsulate related " +
-    "data and behavior together inside of a single " +
-    "self-contained unit more commonly known as " +
-    "an instance in a bid to manage complexity " +
+    "implementation of Access Granted JS leverages " +
+    "prototypal inheritance to logically encapsulate " +
+    "related data and behavior together inside of a " +
+    "single self-contained unit more commonly known " +
+    "as an instance in a bid to manage complexity " +
     "through the constructs afforded by object " +
     "oriented programming.\n" +
     "\n" +
@@ -324,8 +323,8 @@ Game.prototype.autoSolveSequential2 = function autoSolveSequential2(event) {
   event.preventDefault();
 };
 
-//randomly generates all possible permutations of each combination and
-//attempts unentered permutations until solved
+//randomly generates all possible permutations of each combination
+//while attempting unentered permutations until solved
 Game.prototype.autoSolveRandom = function autoSolveRandom(event) {
   let uniqueDigits = this.getUniqueDigits();
   let inferences = this.inferAbsentDigits();
@@ -414,44 +413,27 @@ Game.prototype.autoSolveRandom3 = function autoSolveRandom3(event) {
 Game.prototype.autoSolveBenchmarks = function autoSolveBenchmarks() {
   let startTime, endTime;
   let benchpin = this.pinGen();
+  let autoSolveMethods = [];
+  
+  autoSolveMethods.push(this.autoSolveSequential);
+  autoSolveMethods.push(this.autoSolveSequential2);
+  autoSolveMethods.push(this.autoSolveRandom);
+  autoSolveMethods.push(this.autoSolveRandom2);
+  autoSolveMethods.push(this.autoSolveRandom3);
   
   //suppress win dialog box
   this.silent = true;
   
-  this.pin = benchpin;
-  startTime = Date.now();
-  this.autoSolveSequential(new CustomEvent("CustomEvent"));
-  endTime = Date.now();
-  console.log("autoSolveSequential  (" + benchpin + ") : " +
-    +(endTime - startTime) + "ms");
-  
-  this.pin = benchpin;
-  startTime = Date.now();
-  this.autoSolveSequential2(new CustomEvent("CustomEvent"));
-  endTime = Date.now();
-  console.log("autoSolveSequential2 (" + benchpin + ") : " +
-    +(endTime - startTime) + "ms");
-  
-  this.pin = benchpin;
-  startTime = Date.now();
-  this.autoSolveRandom(new CustomEvent("CustomEvent"));
-  endTime = Date.now();
-  console.log("autoSolveRandom      (" + benchpin + ") : " +
-    +(endTime - startTime) + "ms");
-  
-  this.pin = benchpin;
-  startTime = Date.now();
-  this.autoSolveRandom2(new CustomEvent("CustomEvent"));
-  endTime = Date.now();
-  console.log("autoSolveRandom2     (" + benchpin + ") : " +
-    +(endTime - startTime) + "ms");
-  
-  this.pin = benchpin;
-  startTime = Date.now();
-  this.autoSolveRandom3(new CustomEvent("CustomEvent"));
-  endTime = Date.now();
-  console.log("autoSolveRandom3     (" + benchpin + ") : " +
-    +(endTime - startTime) + "ms");
+  for (let i = 0; i < autoSolveMethods.length; i++) {
+    this.pin = benchpin;
+    startTime = Date.now();
+    autoSolveMethods[i].call(this, new CustomEvent("CustomEvent"));
+    endTime = Date.now();
+    console.log(autoSolveMethods[i].name +
+      " ".repeat(21 - autoSolveMethods[i].name.length) +
+      "(" + benchpin + ") : " +
+      +(endTime - startTime) + "ms");
+  }
   
   this.silent = false;
 };
