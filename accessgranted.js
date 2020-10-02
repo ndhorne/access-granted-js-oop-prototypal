@@ -164,8 +164,8 @@ Game.prototype.about = function about(event) {
     "\n" +
     "This new but not necessarily improved " +
     "implementation of Access Granted JS leverages " +
-    "prototypal inheritance to logically encapsulate " +
-    "related data and behavior together inside of a " +
+    "prototypal inheritance to encapsulate " +
+    "related data and behaviors together inside of a " +
     "single self-contained unit more commonly known " +
     "as an instance in a bid to manage complexity " +
     "through the constructs afforded by object " +
@@ -218,6 +218,25 @@ Game.prototype.inferAbsentDigits = function inferAbsentDigits() {
   return inferences;
 };
 
+//shifts digits of base combination to exhaust permutations
+Game.prototype.shiftBase = function shiftBase(base, pass) {
+  let current;
+  
+  if (pass == 0) {
+    current = base;
+  } else if (pass == 1) {
+    current = base[1] + base[0] + base[2] + base[3];
+  } else if (pass == 2) {
+    current = base[2] + base[0] + base[1] + base[3];
+  } else if (pass == 3) {
+    current = base[3] + base[0] + base[1] + base[2];
+  } else {
+	console.error("Erroneous pass value");
+  }
+  
+  return current;
+}
+
 //sequentially attempts all possible permutations of each combination
 //until solved
 Game.prototype.autoSolveSequential = function autoSolveSequential(event) {
@@ -227,18 +246,9 @@ Game.prototype.autoSolveSequential = function autoSolveSequential(event) {
   for (let inference of inferences) {
     
     for (let i = 0; i < 4; i++) {
-      let base = inference;
       let current;
       
-      if (i == 0) {
-        current = base;
-      } else if (i == 1) {
-        current = base[1] + base[0] + base[2] + base[3];
-      } else if (i == 2) {
-        current = base[2] + base[0] + base[1] + base[3];
-      } else if (i == 3) {
-        current = base[3] + base[0] + base[1] + base[2];
-      }
+      current = this.shiftBase(inference, i);
       
       solved = this.verifyEntry(current);
       for (let j = 0; j < 3; j++) {
@@ -283,18 +293,9 @@ Game.prototype.autoSolveSequential2 = function autoSolveSequential2(event) {
   for (let inference of inferences) {
     
     for (let i = 0; i < 4; i++) {
-      let base = inference;
       let current;
       
-      if (i == 0) {
-        current = base;
-      } else if (i == 1) {
-        current = base[1] + base[0] + base[2] + base[3];
-      } else if (i == 2) {
-        current = base[2] + base[0] + base[1] + base[3];
-      } else if (i == 3) {
-        current = base[3] + base[0] + base[1] + base[2];
-      }
+      current = this.shiftBase(inference, i);
       
       permutations.push(current);
       for (let j = 0; j < 3; j++) {
